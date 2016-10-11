@@ -4702,7 +4702,6 @@ public abstract class BaseAssignmentService implements AssignmentService, Entity
 	@SuppressWarnings("deprecation")
 	public Collection<Group> getSubmitterGroupList(String searchFilterOnly, String allOrOneGroup, String searchString, String aRef, String contextString) {
 	    Collection<Group> rv = new ArrayList<Group>();
-	    allOrOneGroup = StringUtil.trimToNull(allOrOneGroup);
 	    searchString = StringUtil.trimToNull(searchString);
 	    boolean bSearchFilterOnly = "true".equalsIgnoreCase(searchFilterOnly);
 	    try
@@ -4711,37 +4710,29 @@ public abstract class BaseAssignmentService implements AssignmentService, Entity
 	        if (a != null)
 	        {
 	        	Site st = SiteService.getSite(contextString);
-	        	if (allOrOneGroup.equals(AssignmentConstants.ALL))
+	        	if (a.getAccess().equals(Assignment.AssignmentAccess.SITE))
 	        	{
-		            if (a.getAccess().equals(Assignment.AssignmentAccess.SITE))
-		            {
-		                Collection<Group> groupRefs = st.getGroups();
-		                for (Iterator gIterator = groupRefs.iterator(); gIterator.hasNext();)
-		                {
-		                    Group _gg = (Group)gIterator.next();
-		                    //if (_gg.getProperties().get(GROUP_SECTION_PROPERTY) == null) {		// NO SECTIONS (this might not be valid test for manually created sections)
-		                    rv.add(_gg);
-		                    //}
-		                }
-		            } 
-		            else
-		            {
-		                Collection<String> groupRefs = a.getGroups();
-		                for (Iterator gIterator = groupRefs.iterator(); gIterator.hasNext();)
-		                {
-		                    Group _gg = st.getGroup((String)gIterator.next());		// NO SECTIONS (this might not be valid test for manually created sections)
-		                    if (_gg != null) {
-		                        rv.add(_gg);
-		                    }
-		                }
-		            }
-	        	}
+	        		Collection<Group> groupRefs = st.getGroups();
+	        		for (Iterator gIterator = groupRefs.iterator(); gIterator.hasNext();)
+	        		{
+	        			Group _gg = (Group)gIterator.next();
+	        			//if (_gg.getProperties().get(GROUP_SECTION_PROPERTY) == null) {		// NO SECTIONS (this might not be valid test for manually created sections)
+	        			rv.add(_gg);
+	        			//}
+	        		}
+	        	} 
 	        	else
 	        	{
-	        		Group _gg = st.getGroup(allOrOneGroup);
-	        		 if (_gg != null) {// && _gg.getProperties().get(GROUP_SECTION_PROPERTY) == null) {
-	                        rv.add(_gg);
-	                    }
+	        		Collection<String> groupRefs = a.getGroups();
+	        		for (Iterator gIterator = groupRefs.iterator(); gIterator.hasNext();)
+	        		{
+	        			Group _gg = st.getGroup((String)gIterator.next());		// NO SECTIONS (this might not be valid test for manually created sections)
+	        			if (_gg != null)
+	        			{
+	        				rv.add(_gg);
+	        				
+	        			}
+	        		}
 	        	}
 
 	            for (Iterator uIterator = rv.iterator(); uIterator.hasNext();)
